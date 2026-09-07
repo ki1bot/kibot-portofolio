@@ -252,7 +252,7 @@ export const FALLBACK_PROJECTS = [
     description:
       "Platform latihan debugging interaktif yang membantu pengguna belajar menemukan, memahami, dan memperbaiki kesalahan pada kode program. Setiap tantangan mengajak pengguna menentukan bagian kode yang bermasalah, memperbaikinya melalui code editor, menjalankan hasil perbaikan, lalu menjelaskan penyebab bug yang ditemukan. Tersedia 64 tantangan dari delapan bahasa pemrograman dengan tingkat kesulitan yang berbeda, dilengkapi hint, sistem penilaian, riwayat pengerjaan, progres, poin, dan leaderboard untuk membuat proses belajar debugging lebih terarah.",
     img: assetUrl("projects/DebuggingPemrograman.png"),
-    link: "https://debugging-pemrograman-production.up.railway.app/",
+    link: "https://debugging-pemrograman.up.railway.app/",
     github: "https://github.com/ki1bot/debugging-pemrograman.git",
     features: [
       "Registrasi dan login pengguna, reset password, verifikasi email, pengelolaan profil dan password, serta fitur untuk menghapus akun",
@@ -345,7 +345,7 @@ export const FALLBACK_PROJECTS = [
     description:
       "Platform pembelajaran dan perencanaan karier yang membantu mahasiswa menentukan target karier, mengukur kemampuan awal, mengetahui keterampilan yang masih perlu dikembangkan, dan mengikuti jalur belajar yang lebih terarah. SkillPath AI menyediakan assessment, analisis skill gap, roadmap pembelajaran, materi dan evaluasi, rekomendasi proyek portofolio, pelacakan progres, serta insight berbasis AI untuk membantu pengguna memahami perkembangan belajar dan menentukan langkah berikutnya.",
     img: assetUrl("projects/SkillPathAI.png"),
-    link: "https://skillpath-ai-production-cc51.up.railway.app/",
+    link: "https://skillpath-ai.my.id/",
     github: "https://github.com/ki1bot/skillpath-ai.git",
     features: [
       "Menentukan target karier dan preferensi belajar melalui proses onboarding",
