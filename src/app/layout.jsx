@@ -1,5 +1,6 @@
 import "./css/style.css";
 import "./css/StyleMobile.css";
+import "./css/firefox-performance.css";
 
 import { LoadingScreen } from "@/components/animations/LoadingScreen";
 import { ReloadToHome } from "@/components/animations/ReloadToHome";

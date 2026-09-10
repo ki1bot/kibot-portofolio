@@ -169,8 +169,16 @@ function useTypewriter(
 
 export function HeroSection() {
   const typedRole = useTypewriter(heroRoles);
+
   const gifFieldRef = useRef(null);
-  const [shouldLoadGif, setShouldLoadGif] = useState(false);
+  const gifMotionFrameRef = useRef(null);
+  const gifVisibilityFrameRef = useRef(null);
+  const gifPointerRef = useRef({
+    clientX: 0,
+    clientY: 0,
+  });
+
+  const [isGifVisible, setIsGifVisible] = useState(false);
 
   useEffect(() => {
     const gifField = gifFieldRef.current;
@@ -179,45 +187,49 @@ export function HeroSection() {
       return;
     }
 
-    const desktopMediaQuery = window.matchMedia("(min-width: 1024px)");
-    let animationFrameId = 0;
-
-    function scheduleGifLoad() {
-      animationFrameId = window.requestAnimationFrame(() => {
-        setShouldLoadGif(true);
-      });
-    }
-
-    if (desktopMediaQuery.matches) {
-      scheduleGifLoad();
-
-      return () => {
-        window.cancelAnimationFrame(animationFrameId);
-      };
-    }
-
     if (!("IntersectionObserver" in window)) {
-      scheduleGifLoad();
+      gifVisibilityFrameRef.current = window.requestAnimationFrame(() => {
+        setIsGifVisible(true);
+        gifVisibilityFrameRef.current = null;
+      });
 
       return () => {
-        window.cancelAnimationFrame(animationFrameId);
+        if (gifVisibilityFrameRef.current !== null) {
+          window.cancelAnimationFrame(gifVisibilityFrameRef.current);
+          gifVisibilityFrameRef.current = null;
+        }
+
+        if (gifMotionFrameRef.current !== null) {
+          window.cancelAnimationFrame(gifMotionFrameRef.current);
+          gifMotionFrameRef.current = null;
+        }
+
+        resetGifMotion(gifField);
       };
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const isVisible = entries.some((entry) => entry.isIntersecting);
+        const entry = entries[0];
 
-        if (!isVisible) {
+        if (!entry) {
           return;
         }
 
-        setShouldLoadGif(true);
-        observer.disconnect();
+        setIsGifVisible(entry.isIntersecting);
+
+        if (!entry.isIntersecting) {
+          if (gifMotionFrameRef.current !== null) {
+            window.cancelAnimationFrame(gifMotionFrameRef.current);
+            gifMotionFrameRef.current = null;
+          }
+
+          resetGifMotion(gifField);
+        }
       },
       {
         root: null,
-        rootMargin: "0px",
+        rootMargin: "240px 0px",
         threshold: 0.01,
       },
     );
@@ -225,14 +237,23 @@ export function HeroSection() {
     observer.observe(gifField);
 
     return () => {
-      window.cancelAnimationFrame(animationFrameId);
       observer.disconnect();
+
+      if (gifVisibilityFrameRef.current !== null) {
+        window.cancelAnimationFrame(gifVisibilityFrameRef.current);
+        gifVisibilityFrameRef.current = null;
+      }
+
+      if (gifMotionFrameRef.current !== null) {
+        window.cancelAnimationFrame(gifMotionFrameRef.current);
+        gifMotionFrameRef.current = null;
+      }
+
+      resetGifMotion(gifField);
     };
   }, []);
 
-  function handleGifPointerMove(event) {
-    const element = event.currentTarget;
-
+  function updateGifMotion(element) {
     if (!(element instanceof HTMLElement)) {
       return;
     }
@@ -243,8 +264,17 @@ export function HeroSection() {
       return;
     }
 
-    const pointerX = clamp(event.clientX - rect.left, 0, rect.width);
-    const pointerY = clamp(event.clientY - rect.top, 0, rect.height);
+    const pointerX = clamp(
+      gifPointerRef.current.clientX - rect.left,
+      0,
+      rect.width,
+    );
+
+    const pointerY = clamp(
+      gifPointerRef.current.clientY - rect.top,
+      0,
+      rect.height,
+    );
 
     const normalizedX = pointerX / rect.width - 0.5;
     const normalizedY = pointerY / rect.height - 0.5;
@@ -255,23 +285,58 @@ export function HeroSection() {
     const rotateY = normalizedX * 12;
 
     element.classList.add("is-gif-active");
+
     element.style.setProperty("--gif-x", `${translateX.toFixed(2)}px`);
     element.style.setProperty("--gif-y", `${translateY.toFixed(2)}px`);
     element.style.setProperty("--gif-rotate-x", `${rotateX.toFixed(2)}deg`);
     element.style.setProperty("--gif-rotate-y", `${rotateY.toFixed(2)}deg`);
     element.style.setProperty("--gif-scale", "1.055");
+
     element.style.setProperty(
       "--gif-spot-x",
-      `${(pointerX / rect.width) * 100}%`,
+      `${((pointerX / rect.width) * 100).toFixed(2)}%`,
     );
+
     element.style.setProperty(
       "--gif-spot-y",
-      `${(pointerY / rect.height) * 100}%`,
+      `${((pointerY / rect.height) * 100).toFixed(2)}%`,
     );
+
     element.style.setProperty("--gif-glow-opacity", "1");
   }
 
+  function handleGifPointerMove(event) {
+    if (!isGifVisible) {
+      return;
+    }
+
+    const element = event.currentTarget;
+
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
+
+    gifPointerRef.current = {
+      clientX: event.clientX,
+      clientY: event.clientY,
+    };
+
+    if (gifMotionFrameRef.current !== null) {
+      return;
+    }
+
+    gifMotionFrameRef.current = window.requestAnimationFrame(() => {
+      gifMotionFrameRef.current = null;
+      updateGifMotion(element);
+    });
+  }
+
   function handleGifPointerLeave(event) {
+    if (gifMotionFrameRef.current !== null) {
+      window.cancelAnimationFrame(gifMotionFrameRef.current);
+      gifMotionFrameRef.current = null;
+    }
+
     resetGifMotion(event.currentTarget);
   }
 
@@ -368,13 +433,13 @@ export function HeroSection() {
             className="hero-gif-field relative mx-auto flex w-full max-w-[320px] cursor-pointer items-center justify-center bg-transparent sm:max-w-[420px] md:max-w-[520px] lg:max-w-[720px]"
           >
             <Image
-              src={shouldLoadGif ? HERO_GIF_SOURCE : TRANSPARENT_GIF}
+              src={isGifVisible ? HERO_GIF_SOURCE : TRANSPARENT_GIF}
               alt="Frontend development illustration"
               width={690}
               height={690}
               sizes="(max-width: 639px) 320px, (max-width: 767px) 420px, (max-width: 1023px) 520px, 690px"
-              loading={shouldLoadGif ? "eager" : "lazy"}
-              fetchPriority={shouldLoadGif ? "high" : "low"}
+              loading={isGifVisible ? "eager" : "lazy"}
+              fetchPriority={isGifVisible ? "high" : "low"}
               decoding="async"
               unoptimized
               className="hero-gif-image relative z-10 w-full max-w-[320px] object-contain sm:max-w-[420px] md:max-w-[520px] lg:max-w-[690px]"

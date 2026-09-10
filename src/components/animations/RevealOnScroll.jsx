@@ -19,40 +19,20 @@ function getObserverPool() {
   }
 
   const callbacks = new Map();
-  const pendingEntries = new Map();
-
-  let animationFrameId = null;
-
-  const flushEntries = () => {
-    animationFrameId = null;
-
-    pendingEntries.forEach((entry, element) => {
-      callbacks.get(element)?.(entry);
-    });
-
-    pendingEntries.clear();
-  };
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      pendingEntries.set(entry.target, entry);
-    });
+      const callback = callbacks.get(entry.target);
 
-    if (animationFrameId === null) {
-      animationFrameId = window.requestAnimationFrame(flushEntries);
-    }
+      if (callback) {
+        callback(entry);
+      }
+    });
   }, OBSERVER_OPTIONS);
 
   observerPool = {
     callbacks,
-    pendingEntries,
     observer,
-    cancelPendingFrame() {
-      if (animationFrameId !== null) {
-        window.cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-      }
-    },
   };
 
   return observerPool;
@@ -74,11 +54,9 @@ function observeElement(element, callback) {
     isActive = false;
 
     pool.callbacks.delete(element);
-    pool.pendingEntries.delete(element);
     pool.observer.unobserve(element);
 
     if (pool.callbacks.size === 0) {
-      pool.cancelPendingFrame();
       pool.observer.disconnect();
       observerPool = null;
     }
@@ -108,7 +86,6 @@ export function RevealOnScroll({
     ).matches;
 
     let hasRevealed = element.classList.contains("reveal-on-scroll-visible");
-
     let willChangeTimer = null;
     let stopObserving = () => {};
 
@@ -140,7 +117,7 @@ export function RevealOnScroll({
 
       clearWillChangeTimer();
 
-      element.style.willChange = "opacity, filter, transform";
+      element.style.willChange = "opacity, transform";
       element.style.setProperty("--reveal-delay", `${delay}ms`);
       element.classList.add("reveal-on-scroll-visible");
 
@@ -152,9 +129,11 @@ export function RevealOnScroll({
         return;
       }
 
+      hasRevealed = false;
+
       clearWillChangeTimer();
 
-      element.style.willChange = "opacity, filter, transform";
+      element.style.willChange = "opacity, transform";
       element.style.setProperty("--reveal-delay", "0ms");
       element.classList.remove("reveal-on-scroll-visible");
 

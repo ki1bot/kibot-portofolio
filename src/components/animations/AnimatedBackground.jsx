@@ -1,10 +1,16 @@
 export function AnimatedBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <div className="absolute left-0 top-0 h-80 w-full bg-gradient-to-b from-violet-500/10 to-transparent blur-3xl" />
-      <div className="absolute bottom-0 left-0 h-96 w-full bg-gradient-to-t from-blue-600/12 to-transparent blur-3xl" />
-      <div className="absolute right-0 top-1/4 h-[520px] w-72 bg-gradient-to-l from-cyan-400/8 to-transparent blur-3xl" />
-      <div className="absolute left-0 top-1/3 h-[520px] w-72 bg-gradient-to-r from-violet-500/10 to-transparent blur-3xl" />
-    </div>
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 -z-10"
+      style={{
+        backgroundImage: [
+          "radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.11), transparent 38%)",
+          "radial-gradient(circle at 50% 100%, rgba(37, 99, 235, 0.11), transparent 42%)",
+          "radial-gradient(circle at 100% 35%, rgba(34, 211, 238, 0.07), transparent 32%)",
+          "radial-gradient(circle at 0% 42%, rgba(139, 92, 246, 0.09), transparent 34%)",
+        ].join(", "),
+      }}
+    />
   );
 }
