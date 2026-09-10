@@ -92,11 +92,13 @@ export function LoadingScreen() {
                 "--loader-icon-mobile-delay": mobileDelay,
               }}
             >
-              <Icon
-                className="portfolio-loader-image-icon"
-                stroke={1.8}
-                aria-hidden="true"
-              />
+              <div className="portfolio-loader-icon-float">
+                <Icon
+                  className="portfolio-loader-image-icon"
+                  stroke={1.8}
+                  aria-hidden="true"
+                />
+              </div>
             </div>
           ))}
         </div>

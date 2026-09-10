@@ -93,28 +93,31 @@
   }
 
   .portfolio-loader-content {
+    width: 100%;
     max-width: 92vw;
-    animation-duration: 500ms;
+    animation-duration: 500ms !important;
   }
 
   .portfolio-loader-icon {
-    animation:
-      portfolioIconReveal 450ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
-      portfolioIconFloat 2.4s ease-in-out infinite;
-    animation-delay:
-      var(--loader-icon-mobile-delay),
-      calc(var(--loader-icon-mobile-delay) + 550ms);
+    animation: portfolioIconRevealStable 450ms cubic-bezier(0.22, 1, 0.36, 1)
+      forwards !important;
+    animation-delay: var(--loader-icon-mobile-delay) !important;
+  }
+
+  .portfolio-loader-icon-float {
+    animation: portfolioIconFloatStable 2.4s ease-in-out infinite !important;
+    animation-delay: calc(var(--loader-icon-mobile-delay) + 550ms) !important;
+    animation-fill-mode: both !important;
   }
 
   .portfolio-loader-title span {
-    animation: portfolioTextReveal 500ms cubic-bezier(0.22, 1, 0.36, 1) 250ms
-      forwards;
+    animation: portfolioTextRevealStable 500ms cubic-bezier(0.22, 1, 0.36, 1)
+      250ms forwards !important;
   }
 
   .portfolio-loader-title strong {
-    animation:
-      portfolioTextReveal 500ms cubic-bezier(0.22, 1, 0.36, 1) 400ms forwards,
-      portfolioGradientMove 2.4s ease-in-out 900ms infinite alternate;
+    animation: portfolioTextRevealStable 500ms cubic-bezier(0.22, 1, 0.36, 1)
+      400ms forwards !important;
   }
 
   .portfolio-loader-progress span {
