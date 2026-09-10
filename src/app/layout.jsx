@@ -1,8 +1,8 @@
 import { Inter } from "next/font/google";
 
 import "./css/style.css";
-import "./css/StyleMobile.css";
 import "./css/firefox-performance.css";
+import "./css/StyleMobile.css";
 
 import { LoadingScreen } from "@/components/animations/LoadingScreen";
 import { ReloadToHome } from "@/components/animations/ReloadToHome";
@@ -42,6 +42,9 @@ export const metadata = {
 };
 
 export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
   themeColor: "#020617",
 };
 
