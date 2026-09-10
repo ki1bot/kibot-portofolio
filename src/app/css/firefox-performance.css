@@ -1,87 +1,90 @@
-@supports (-moz-appearance: none) {
-  body {
-    background-attachment: scroll !important;
-  }
+html {
+  font-synthesis: none;
+  scrollbar-gutter: stable;
+}
 
-  [class*="backdrop-blur"] {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-  }
+body {
+  background-attachment: scroll !important;
+}
 
-  .reveal-on-scroll {
-    filter: none !important;
-    transition:
-      opacity 700ms ease,
-      transform 700ms cubic-bezier(0.22, 1, 0.36, 1) !important;
-    transition-delay: var(--reveal-delay, 0ms) !important;
-    will-change: auto !important;
-  }
+[class*="backdrop-blur"] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
 
-  .reveal-on-scroll-visible {
-    filter: none !important;
-  }
+.reveal-on-scroll {
+  filter: none !important;
+  transition:
+    opacity 700ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  transition-delay: var(--reveal-delay, 0ms) !important;
+  will-change: auto !important;
+}
 
-  .detail-reveal {
-    filter: none !important;
-  }
+.reveal-on-scroll-visible {
+  filter: none !important;
+}
 
-  .portfolio-loader-content,
-  .portfolio-loader-title span,
-  .portfolio-loader-title strong,
-  .portfolio-loader-exit {
-    filter: none !important;
-  }
+.detail-reveal {
+  filter: none !important;
+}
 
-  .portfolio-loader-orb {
-    filter: blur(18px) !important;
-    will-change: transform;
-  }
+.portfolio-loader-content,
+.portfolio-loader-title span,
+.portfolio-loader-title strong,
+.portfolio-loader-exit {
+  filter: none !important;
+}
 
-  .portfolio-loader-icon::after {
-    filter: blur(10px) !important;
-  }
+.portfolio-loader-orb {
+  filter: blur(18px) !important;
+  will-change: transform;
+}
 
-  .portfolio-loader-image-icon {
-    filter: none !important;
-  }
+.portfolio-loader-icon::after {
+  filter: blur(10px) !important;
+}
 
-  .hero-gif-image {
-    filter: none !important;
-    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1) !important;
-    will-change: transform !important;
-  }
+.portfolio-loader-image-icon {
+  filter: none !important;
+}
 
-  [class~="blur-3xl"] {
-    filter: blur(24px) !important;
-  }
+.hero-gif-image {
+  filter: none !important;
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  will-change: transform !important;
+}
 
-  [class~="blur-2xl"] {
-    filter: blur(18px) !important;
-  }
+[class~="blur-3xl"] {
+  filter: blur(24px) !important;
+}
 
-  .see-more-button-glow {
-    filter: blur(14px) !important;
-  }
+[class~="blur-2xl"] {
+  filter: blur(18px) !important;
+}
 
-  .detail-glow-line::after {
-    filter: none !important;
-  }
+.see-more-button-glow {
+  filter: blur(14px) !important;
+}
 
-  .video-hover-button {
-    transition:
-      transform 220ms ease,
-      border-color 220ms ease,
-      background-color 220ms ease,
-      color 220ms ease,
-      opacity 220ms ease !important;
-  }
+.detail-glow-line::after {
+  filter: none !important;
+}
 
-  .detail-stat-card,
-  .detail-tech-pill,
-  .detail-image-card,
-  .detail-feature-card,
-  .detail-feature-item {
-    transition-property:
-      transform, border-color, background-color, color, opacity !important;
-  }
+.video-hover-button {
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease,
+    color 220ms ease,
+    opacity 220ms ease !important;
+}
+
+.detail-stat-card,
+.detail-tech-pill,
+.detail-image-card,
+.detail-feature-card,
+.detail-feature-item {
+  transition-property:
+    transform, border-color, background-color, color, opacity !important;
 }

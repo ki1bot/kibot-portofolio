@@ -1,3 +1,5 @@
+import { Inter } from "next/font/google";
+
 import "./css/style.css";
 import "./css/StyleMobile.css";
 import "./css/firefox-performance.css";
@@ -5,6 +7,11 @@ import "./css/firefox-performance.css";
 import { LoadingScreen } from "@/components/animations/LoadingScreen";
 import { ReloadToHome } from "@/components/animations/ReloadToHome";
 import { assetUrl } from "@/lib/supabase-storage";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const siteIcon = assetUrl("assets/logoKibot.png");
 
@@ -42,7 +49,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id" data-scroll-behavior="smooth">
       <body
-        className="portfolio-loading-active"
+        className={`${inter.className} portfolio-loading-active`}
         style={{
           "--portfolio-gradient-blue-image":
             'url("/img/screen/gradient-blue.jpg")',
