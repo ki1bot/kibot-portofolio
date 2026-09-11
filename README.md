@@ -4,9 +4,9 @@ Halo semuanya! 👋
 
 Perkenalkan, saya **Rifqi Susanto**. Project ini merupakan website portofolio pribadi yang saya buat untuk menampilkan profil, pengalaman, kemampuan, daftar project, sertifikat, komentar pengunjung, media sosial, dan form kontak dalam satu website.
 
-Website ini dibangun menggunakan **Next.js**, **React**, **Tailwind CSS**, **Supabase**, **Cloudflare R2**, dan **Nodemailer**. Supabase digunakan untuk menyimpan data project, sertifikat, dan komentar. Cloudflare R2 digunakan untuk menyimpan sebagian besar gambar, dokumen PDF, dan asset berukuran besar.
+Website ini dibangun menggunakan **Next.js**, **React**, **Tailwind CSS**, **Supabase**, **Cloudflare R2**, dan **Resend**. Supabase digunakan untuk menyimpan data project, sertifikat, dan komentar. Cloudflare R2 digunakan untuk menyimpan sebagian besar gambar, dokumen PDF, dan asset berukuran besar. Resend digunakan untuk mengirim pesan dari form kontak.
 
-**Live Demo:** [https://www.rifqii.com/]
+**Live Demo:** [https://www.rifqii.com/](https://www.rifqii.com/)
 
 ---
 
@@ -14,16 +14,18 @@ Website ini dibangun menggunakan **Next.js**, **React**, **Tailwind CSS**, **Sup
 
 Project ini dibuat menggunakan teknologi berikut:
 
-- **Next.js** - Framework React untuk routing, server component, API route, metadata, dan proses build
+- **Next.js** - Framework React untuk routing, Server Component, API Route, metadata, optimasi asset, dan proses build
 - **ReactJS** - Library untuk membangun antarmuka website
 - **Tailwind CSS** - Styling utama untuk tampilan responsif
 - **Supabase** - Database PostgreSQL untuk project, sertifikat, dan komentar
 - **Cloudflare R2** - Penyimpanan gambar, GIF, dokumen PDF, dan asset portofolio
-- **Nodemailer** - Mengirim pesan dari form kontak ke Gmail
+- **Resend** - Layanan pengiriman email untuk form kontak
+- **Tabler Icons React** - Kumpulan icon React termasuk avatar default komentar
 - **Lucide React** - Kumpulan icon yang digunakan pada antarmuka
 - **Radix UI** - Komponen dasar antarmuka yang mudah diakses
 - **shadcn** - Komponen UI yang dapat disesuaikan
 - **ESLint** - Memeriksa kualitas dan konsistensi kode
+- **Vercel** - Platform deployment website
 
 ---
 
@@ -48,8 +50,9 @@ Pastikan perangkat sudah memiliki:
 - Akun Supabase
 - Project Supabase
 - Akun Cloudflare dengan bucket R2
-- Akun Gmail
-- Gmail App Password untuk fitur kontak
+- Domain publik untuk Cloudflare R2
+- Akun Resend
+- Domain atau sender email yang sudah diverifikasi di Resend
 
 ---
 
@@ -58,8 +61,8 @@ Pastikan perangkat sudah memiliki:
 Clone repository dan masuk ke direktori project:
 
 ```bash
-git clone https://github.com/ki1bot/k1bot.git
-cd k1bot
+git clone https://github.com/ki1bot/kibot-portofolio.git
+cd kibot-portofolio
 ```
 
 Install seluruh dependency:
@@ -81,30 +84,43 @@ npm audit
 Buat file `.env.local` pada root project:
 
 ```env
+RESEND_API_KEY=your-resend-api-key
+CONTACT_RECEIVER_EMAIL=your-receiver-email@example.com
+CONTACT_SENDER_EMAIL=portfolio@mail.example.com
+CONTACT_SENDER_NAME=Your Portfolio
+
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-reference.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
 
 NEXT_PUBLIC_R2_ASSET_BASE_URL=https://assets.example.com
-
-GMAIL_USER=your-gmail-address
-GMAIL_APP_PASSWORD=your-gmail-app-password
-CONTACT_RECEIVER_EMAIL=your-receiver-email
 ```
 
 Penjelasan environment variable:
 
-| Variable                               | Kegunaan                                                        |
-| -------------------------------------- | --------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`             | URL project Supabase                                            |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key Supabase untuk akses frontend                   |
-| `NEXT_PUBLIC_R2_ASSET_BASE_URL`        | Domain publik Cloudflare R2                                     |
-| `GMAIL_USER`                           | Akun Gmail yang digunakan oleh Nodemailer                       |
-| `GMAIL_APP_PASSWORD`                   | App Password dari akun Gmail                                    |
-| `CONTACT_RECEIVER_EMAIL`               | Alamat email tujuan dari pesan yang dikirim melalui form kontak |
+| Variable                               | Kegunaan                                                  |
+| -------------------------------------- | --------------------------------------------------------- |
+| `RESEND_API_KEY`                       | API key Resend yang digunakan server untuk mengirim email |
+| `CONTACT_RECEIVER_EMAIL`               | Alamat email tujuan pesan dari form kontak                |
+| `CONTACT_SENDER_EMAIL`                 | Alamat pengirim yang sudah terverifikasi melalui Resend   |
+| `CONTACT_SENDER_NAME`                  | Nama pengirim yang ditampilkan pada email                 |
+| `NEXT_PUBLIC_SUPABASE_URL`             | URL project Supabase                                      |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key Supabase untuk akses frontend             |
+| `NEXT_PUBLIC_R2_ASSET_BASE_URL`        | Domain publik Cloudflare R2                               |
 
-Jangan menggunakan Supabase Secret Key pada environment variable yang diawali dengan `NEXT_PUBLIC_` karena nilainya akan tersedia pada frontend.
+`RESEND_API_KEY` merupakan secret server-side. Jangan menggunakan prefix `NEXT_PUBLIC_` pada variable tersebut dan jangan menyimpannya di repository.
 
-Setelah mengubah `.env.local`, hentikan dan jalankan ulang development server.
+Supabase publishable key dapat digunakan pada frontend karena akses database tetap dibatasi menggunakan Row Level Security.
+
+Setelah mengubah `.env.local`, hentikan lalu jalankan kembali development server.
+
+Untuk deployment Vercel, masukkan environment variable yang sama melalui:
+
+```txt
+Vercel Dashboard
+→ Project
+→ Settings
+→ Environment Variables
+```
 
 ---
 
@@ -196,7 +212,6 @@ CREATE TABLE IF NOT EXISTS public.portfolio_comments (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   content text NOT NULL,
   user_name text NOT NULL,
-  profile_image text NOT NULL DEFAULT '/img/screen/default-avatar.jpg',
   is_pinned boolean NOT NULL DEFAULT false,
   created_at timestamptz NOT NULL DEFAULT now()
 );
@@ -235,9 +250,13 @@ Menyimpan judul sertifikat, gambar preview, dokumen PDF, jenis file, dan urutan 
 
 #### `portfolio_comments`
 
-Menyimpan nama pengunjung, isi komentar, status pinned, avatar, dan waktu komentar dibuat.
+Menyimpan nama pengunjung, isi komentar, status pinned, dan waktu komentar dibuat.
 
-Form kontak tidak disimpan ke database Supabase. Pesan dikirim langsung ke Gmail melalui Nodemailer.
+Avatar komentar pengunjung tidak disimpan di database. Komentar biasa menggunakan `IconUserCircle` dari Tabler Icons pada antarmuka.
+
+Pinned comment milik Rifqi menggunakan foto profil dari Cloudflare R2 yang ditentukan oleh application layer.
+
+Form kontak tidak disimpan ke database Supabase. Pesan dikirim melalui Resend dari API Route Next.js.
 
 ---
 
@@ -291,7 +310,6 @@ FOR INSERT
 TO anon, authenticated
 WITH CHECK (
   is_pinned = false
-  AND profile_image = '/img/screen/default-avatar.jpg'
 );
 
 GRANT USAGE ON SCHEMA public
@@ -309,11 +327,13 @@ GRANT SELECT
 ON public.portfolio_comments
 TO anon, authenticated;
 
+REVOKE INSERT
+ON public.portfolio_comments
+FROM anon, authenticated;
+
 GRANT INSERT (
   content,
-  user_name,
-  profile_image,
-  is_pinned
+  user_name
 )
 ON public.portfolio_comments
 TO anon, authenticated;
@@ -333,9 +353,24 @@ FROM anon, authenticated;
 COMMIT;
 ```
 
+Visitor hanya memperoleh izin untuk mengisi kolom:
+
+```txt
+content
+user_name
+```
+
+Nilai `is_pinned` menggunakan default database:
+
+```sql
+false
+```
+
+Visitor tidak memperoleh column privilege untuk menentukan status pinned.
+
 ---
 
-### 6. Seed Komentar Admin
+### 6. Seed Komentar
 
 Jalankan query berikut untuk membuat komentar pinned milik Rifqi dan komentar default Faris:
 
@@ -346,7 +381,6 @@ INSERT INTO public.portfolio_comments (
   id,
   content,
   user_name,
-  profile_image,
   is_pinned,
   created_at
 )
@@ -354,7 +388,6 @@ VALUES (
   'd5a0a800-bda0-44f8-ab94-526e12f34f6a',
   'Halo, terima kasih sudah mampir ke portofolio saya.',
   'Rifqi',
-  'assets/rifqi.jpg',
   true,
   '2026-02-24 00:00:00+07'
 )
@@ -362,14 +395,12 @@ ON CONFLICT (user_name, is_pinned)
 WHERE is_pinned = true
 DO UPDATE SET
   content = EXCLUDED.content,
-  profile_image = EXCLUDED.profile_image,
   created_at = EXCLUDED.created_at;
 
 INSERT INTO public.portfolio_comments (
   id,
   content,
   user_name,
-  profile_image,
   is_pinned,
   created_at
 )
@@ -377,7 +408,6 @@ VALUES (
   '3039eb92-6147-4c89-92a9-077b4837925c',
   'Portofolionya rapi dan bagus banget.',
   'Faris',
-  '/img/screen/default-avatar.jpg',
   false,
   '2026-03-13 00:00:00+07'
 )
@@ -385,16 +415,103 @@ ON CONFLICT (id)
 DO UPDATE SET
   content = EXCLUDED.content,
   user_name = EXCLUDED.user_name,
-  profile_image = EXCLUDED.profile_image,
   is_pinned = EXCLUDED.is_pinned,
   created_at = EXCLUDED.created_at;
 
 COMMIT;
 ```
 
+Pinned comment Rifqi tidak menyimpan URL foto di database.
+
+Application layer akan memberikan asset:
+
+```txt
+assets/rifqi.jpg
+```
+
+untuk komentar yang memenuhi kondisi:
+
+```txt
+is_pinned = true
+user_name = Rifqi
+```
+
+Komentar pengunjung lain menggunakan `IconUserCircle`.
+
 ---
 
-### 7. Run Locally
+### 7. Comment API
+
+Endpoint pengiriman komentar berada di:
+
+```txt
+src/app/api/comments/route.js
+```
+
+Request komentar hanya mengirim data:
+
+```json
+{
+  "userName": "Nama Pengunjung",
+  "content": "Isi komentar"
+}
+```
+
+API kemudian memasukkan data berikut ke Supabase:
+
+```javascript
+const { error } = await supabase.from("portfolio_comments").insert({
+  user_name: userName,
+  content,
+});
+```
+
+Status pinned tidak diterima dari frontend dan menggunakan default `false` dari database.
+
+---
+
+### 8. Contact Email
+
+Endpoint form kontak berada di:
+
+```txt
+src/app/api/route.js
+```
+
+Form kontak menggunakan Resend melalui REST API:
+
+```txt
+https://api.resend.com/emails
+```
+
+Environment variable yang wajib tersedia:
+
+```env
+RESEND_API_KEY=your-resend-api-key
+CONTACT_RECEIVER_EMAIL=your-receiver-email@example.com
+CONTACT_SENDER_EMAIL=portfolio@mail.example.com
+CONTACT_SENDER_NAME=Your Portfolio
+```
+
+API contact melakukan:
+
+- Validasi nama
+- Validasi alamat email
+- Validasi panjang pesan
+- Validasi submission ID
+- Validasi waktu pengiriman
+- Honeypot anti-spam
+- Rate limiting
+- Idempotency key
+- Timeout request menuju Resend
+- Sanitasi email header
+- Penanganan error Resend
+
+Email visitor digunakan sebagai `reply_to`, sehingga balasan dapat langsung ditujukan kepada pengirim pesan.
+
+---
+
+### 9. Run Locally
 
 Jalankan development server:
 
@@ -412,6 +529,12 @@ Jalankan ESLint:
 
 ```bash
 npm run lint
+```
+
+Hapus cache build jika diperlukan:
+
+```bash
+rm -rf .next
 ```
 
 Lakukan production build:
@@ -438,9 +561,11 @@ npm run start
 - **Projects** — Menampilkan daftar project yang berasal dari Supabase atau data fallback
 - **Project Detail** — Menampilkan deskripsi, gambar, teknologi, fitur utama, live demo, GitHub, dan dokumen PDF
 - **Certificates** — Menampilkan preview sertifikat dan tautan menuju dokumen PDF
-- **Comments** — Menampilkan komentar pinned dan komentar dari pengunjung
-- **Comment Form** — Pengunjung dapat mengirim komentar menggunakan avatar default
-- **Contact** — Mengirim pesan dari website langsung menuju Gmail
+- **Comments** — Menampilkan pinned comment dan komentar dari pengunjung
+- **Comment Form** — Pengunjung dapat mengirim komentar menggunakan nama dan isi komentar
+- **Guest Avatar** — Komentar biasa menggunakan `IconUserCircle` dari Tabler Icons
+- **Pinned Admin Avatar** — Pinned comment Rifqi menggunakan foto profil dari Cloudflare R2
+- **Contact** — Mengirim pesan dari website melalui Resend
 - **Social Media** — Menampilkan LinkedIn, GitHub, Instagram, YouTube, Spotify, dan TikTok
 - **Responsive Layout** — Mendukung tampilan desktop, tablet, dan mobile
 - **Loading Screen** — Menampilkan animasi saat halaman pertama kali dimuat
@@ -457,31 +582,8 @@ Pemilik dapat melakukan pengelolaan berikut melalui Supabase Dashboard:
 - **Certificates** — Menambah, mengedit, mengurutkan, atau menghapus sertifikat
 - **Comments** — Melihat, mengubah status pinned, atau menghapus komentar
 - **Cloudflare R2** — Mengelola gambar, PDF, GIF, dan asset portofolio
+- **Resend** — Mengelola API key, domain, sender email, dan riwayat pengiriman email
 - **Vercel** — Mengelola deployment dan environment variable
-
----
-
-## Troubleshooting
-
-- Pastikan Node.js, npm, dan Git sudah terpasang
-- Pastikan sudah menjalankan `npm install`
-- Pastikan file `.env.local` berada pada root project
-- Restart development server setelah mengubah `.env.local`
-- Pastikan `NEXT_PUBLIC_SUPABASE_URL` menggunakan URL project Supabase yang benar
-- Pastikan `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` menggunakan publishable key yang benar
-- Jika project atau sertifikat tidak tampil, periksa tabel dan RLS Supabase
-- Jika tabel kosong, website akan menggunakan data fallback dari `src/lib/constants.js`
-- Jika komentar gagal dikirim, periksa policy `public insert comments`
-- Pastikan komentar baru menggunakan `/img/screen/default-avatar.jpg`
-- Jika foto pinned Rifqi tidak tampil, periksa file `assets/rifqi.jpg` di Cloudflare R2
-- Jika asset R2 tidak tampil, periksa `NEXT_PUBLIC_R2_ASSET_BASE_URL`
-- Jika avatar default tidak tampil, periksa `public/img/screen/default-avatar.jpg`
-- Jika form kontak gagal, periksa `GMAIL_USER`, `GMAIL_APP_PASSWORD`, dan `CONTACT_RECEIVER_EMAIL`
-- Pastikan Gmail App Password tidak mengandung spasi yang salah
-- Jika perubahan data belum langsung tampil, tunggu proses revalidation atau restart development server
-- Jalankan `npm run lint` untuk memeriksa masalah kode
-- Jalankan `npm run build` untuk memastikan project dapat dibangun
-- Jangan menyimpan Secret Key Supabase di repository atau environment variable frontend
 
 ---
 
