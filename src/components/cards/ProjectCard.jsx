@@ -11,8 +11,8 @@ import { createProjectSlug } from "@/lib/project-slug";
 const PROJECT_RETURN_STORAGE_KEY = "portfolio_project_return";
 const PORTFOLIO_SECTION_HASH = "#projects";
 
-function canUseNextImage(imageUrl) {
-  return imageUrl.startsWith("/") && !/\.(?:gif|svg)(?:\?.*)?$/i.test(imageUrl);
+function shouldBypassImageOptimization(imageUrl) {
+  return /\.(?:gif|svg)(?:[?#].*)?$/i.test(String(imageUrl || ""));
 }
 
 function isDownloadableFile(url) {
@@ -101,26 +101,16 @@ export const ProjectCard = memo(function ProjectCard({ project }) {
       <div className="p-4 pb-0 sm:p-5 sm:pb-0">
         <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-950/50 sm:aspect-[16/9]">
           {project.img ? (
-            canUseNextImage(project.img) ? (
-              <Image
-                src={project.img}
-                alt={projectTitle}
-                fill
-                sizes="(max-width: 767px) calc(100vw - 64px), (max-width: 1279px) calc(50vw - 52px), 390px"
-                quality={75}
-                loading="lazy"
-                unoptimized
-                className="object-cover object-top transition duration-700 group-hover:scale-105"
-              />
-            ) : (
-              <img
-                src={project.img}
-                alt={projectTitle}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-105"
-              />
-            )
+            <Image
+              src={project.img}
+              alt={projectTitle}
+              fill
+              sizes="(max-width: 767px) calc(100vw - 64px), (max-width: 1279px) calc(50vw - 52px), 390px"
+              quality={75}
+              loading="lazy"
+              unoptimized={shouldBypassImageOptimization(project.img)}
+              className="object-cover object-top transition duration-700 group-hover:scale-105"
+            />
           ) : (
             <div className="flex h-full items-center justify-center text-sm text-blue-100/60">
               No Image
@@ -163,7 +153,7 @@ export const ProjectCard = memo(function ProjectCard({ project }) {
 
           <Link
             href={projectDetailUrl}
-            prefetch={true}
+            prefetch={false}
             onClick={handleDetailNavigation}
             aria-label={`Buka detail project ${projectTitle}`}
             className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.07] px-5 text-sm font-bold text-white shadow-lg shadow-blue-950/10 transition duration-300 hover:-translate-y-0.5 hover:border-violet-300/25 hover:bg-white/[0.12] min-[430px]:h-12 min-[430px]:w-auto"

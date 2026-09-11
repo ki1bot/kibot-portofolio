@@ -1,25 +1,21 @@
+import Image from "next/image";
 import { ExternalLink, FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 function isPdfFile(filePath) {
-  return filePath?.toLowerCase().endsWith(".pdf");
+  return /\.pdf(?:[?#].*)?$/i.test(String(filePath || ""));
 }
 
 function isImageFile(filePath) {
-  const lowerPath = filePath?.toLowerCase() || "";
-
-  return (
-    lowerPath.endsWith(".png") ||
-    lowerPath.endsWith(".jpg") ||
-    lowerPath.endsWith(".jpeg") ||
-    lowerPath.endsWith(".webp")
-  );
+  return /\.(?:png|jpg|jpeg|webp)(?:[?#].*)?$/i.test(String(filePath || ""));
 }
 
 function getImagePath(filePath) {
-  if (!filePath) return "";
+  if (!filePath) {
+    return "";
+  }
 
   if (isImageFile(filePath)) {
     return filePath;
@@ -28,14 +24,16 @@ function getImagePath(filePath) {
   if (isPdfFile(filePath)) {
     return filePath
       .replace("/serfikatlsp-", "/sertifikatlsp-")
-      .replace(/\.pdf$/i, ".png");
+      .replace(/\.pdf(?=([?#]|$))/i, ".png");
   }
 
   return filePath;
 }
 
 function getPdfPath(filePath) {
-  if (!filePath) return "";
+  if (!filePath) {
+    return "";
+  }
 
   if (isPdfFile(filePath)) {
     return filePath;
@@ -44,10 +42,24 @@ function getPdfPath(filePath) {
   if (isImageFile(filePath)) {
     return filePath
       .replace("/sertifikatlsp-", "/serfikatlsp-")
-      .replace(/\.(png|jpg|jpeg|webp)$/i, ".pdf");
+      .replace(/\.(png|jpg|jpeg|webp)(?=([?#]|$))/i, ".pdf");
   }
 
   return filePath;
+}
+
+function CertificateImage({ src, alt }) {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1279px) calc(50vw - 48px), 390px"
+      quality={75}
+      loading="lazy"
+      className="object-cover object-top transition duration-700 group-hover:scale-105"
+    />
+  );
 }
 
 export function CertificateCard({ certificate }) {
@@ -66,15 +78,9 @@ export function CertificateCard({ certificate }) {
       {isPdf ? (
         <div>
           <a href={pdfPath} target="_blank" rel="noreferrer">
-            <div className="aspect-[4/3] overflow-hidden bg-slate-950/40">
+            <div className="relative aspect-[4/3] overflow-hidden bg-slate-950/40">
               {isImage && imagePath ? (
-                <img
-                  src={imagePath}
-                  alt={certificateTitle}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-105"
-                />
+                <CertificateImage src={imagePath} alt={certificateTitle} />
               ) : (
                 <div className="flex min-h-[260px] flex-col justify-between p-5 sm:min-h-[320px] sm:p-6">
                   <div>
@@ -115,15 +121,9 @@ export function CertificateCard({ certificate }) {
       ) : (
         <div>
           <a href={pdfPath} target="_blank" rel="noreferrer">
-            <div className="aspect-[4/3] overflow-hidden bg-slate-950/40">
+            <div className="relative aspect-[4/3] overflow-hidden bg-slate-950/40">
               {isImage && imagePath ? (
-                <img
-                  src={imagePath}
-                  alt={certificateTitle}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-105"
-                />
+                <CertificateImage src={imagePath} alt={certificateTitle} />
               ) : (
                 <div className="flex h-full items-center justify-center text-sm text-blue-100/60">
                   No Certificate Image

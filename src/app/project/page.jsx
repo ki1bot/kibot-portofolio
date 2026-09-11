@@ -1,4 +1,5 @@
 import { cache } from "react";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   Boxes,
@@ -38,6 +39,10 @@ function getSearchParamValue(searchParams, key) {
   }
 
   return value;
+}
+
+function shouldBypassImageOptimization(imageUrl) {
+  return /\.(?:gif|svg)(?:[?#].*)?$/i.test(String(imageUrl || ""));
 }
 
 function isDownloadableFile(url) {
@@ -110,10 +115,14 @@ export default async function ProjectDetailPage({ searchParams }) {
 
   const features = normalizeJsonArray(project.features);
   const techStack = normalizeJsonArray(project.tech_stack);
+
   const projectTitle = project.title || "Untitled Project";
+
   const projectDescription =
     project.description || "Deskripsi project belum tersedia.";
+
   const downloadableDemo = isDownloadableFile(project.link);
+
   const downloadFileName = downloadableDemo
     ? getDownloadFileName(project.link)
     : undefined;
@@ -132,6 +141,7 @@ export default async function ProjectDetailPage({ searchParams }) {
             <ProjectBackButton />
 
             <span>Projects</span>
+
             <span className="text-blue-100/28">›</span>
 
             <span className="max-w-[180px] truncate text-white min-[420px]:max-w-[260px] sm:max-w-none">
@@ -267,12 +277,17 @@ export default async function ProjectDetailPage({ searchParams }) {
             <div className="space-y-5 lg:space-y-6 lg:pt-12">
               <div className="detail-reveal detail-delay-2 detail-image-card overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] p-2 shadow-2xl shadow-blue-950/30 backdrop-blur-xl">
                 {project.img ? (
-                  <img
+                  <Image
                     src={project.img}
                     alt={projectTitle}
+                    width={1600}
+                    height={1000}
+                    sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1023px) calc(100vw - 80px), 560px"
+                    quality={75}
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
+                    unoptimized={shouldBypassImageOptimization(project.img)}
                     className="aspect-[16/10] w-full rounded-xl object-cover object-top sm:aspect-video"
                   />
                 ) : (

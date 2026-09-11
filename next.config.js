@@ -9,6 +9,14 @@ const R2_ASSET_BASE_URL = String(
   .trim()
   .replace(/\/+$/, "");
 
+const DEFAULT_REMOTE_IMAGE_PATTERNS = [
+  {
+    protocol: "https",
+    hostname: "assets.rifqii.com",
+    pathname: "/**",
+  },
+];
+
 function createR2RemotePatterns() {
   if (!R2_ASSET_BASE_URL) {
     return [];
@@ -31,6 +39,28 @@ function createR2RemotePatterns() {
   }
 }
 
+function createRemoteImagePatterns() {
+  const patterns = [
+    ...DEFAULT_REMOTE_IMAGE_PATTERNS,
+    ...createR2RemotePatterns(),
+  ];
+
+  const uniquePatterns = new Map();
+
+  patterns.forEach((pattern) => {
+    const key = [
+      pattern.protocol,
+      pattern.hostname,
+      pattern.port || "",
+      pattern.pathname || "",
+    ].join("|");
+
+    uniquePatterns.set(key, pattern);
+  });
+
+  return Array.from(uniquePatterns.values());
+}
+
 function createImmutableCacheHeaders() {
   return [
     {
@@ -40,7 +70,6 @@ function createImmutableCacheHeaders() {
   ];
 }
 
-/** @type {import("next").NextConfig} */
 const nextConfig = {
   experimental: {
     inlineCss: true,
@@ -48,12 +77,9 @@ const nextConfig = {
 
   images: {
     minimumCacheTTL: OPTIMIZED_IMAGE_CACHE_TTL,
-
     formats: ["image/webp"],
-
     qualities: [75],
-
-    remotePatterns: createR2RemotePatterns(),
+    remotePatterns: createRemoteImagePatterns(),
   },
 
   async headers() {

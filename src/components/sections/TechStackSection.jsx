@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { TECH_STACK } from "@/lib/constants";
 import { Card, CardContent } from "@/components/ui/card";
 import { RevealOnScroll } from "@/components/animations/RevealOnScroll";
@@ -19,9 +21,14 @@ export function TechStackSection() {
               <Card className="group h-full hover:-translate-y-2 hover:border-violet-300/25 hover:bg-white/[0.1] hover:shadow-violet-500/15">
                 <CardContent className="flex min-h-[150px] flex-col items-center justify-center gap-4 pt-6">
                   <div className="flex size-16 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.07] p-3 transition duration-300 group-hover:scale-110 group-hover:bg-violet-500/15">
-                    <img
+                    <Image
                       src={tech.icon}
                       alt={tech.name}
+                      width={64}
+                      height={64}
+                      sizes="64px"
+                      loading="lazy"
+                      unoptimized
                       className="h-full w-full object-contain transition duration-300 group-hover:rotate-6"
                     />
                   </div>
