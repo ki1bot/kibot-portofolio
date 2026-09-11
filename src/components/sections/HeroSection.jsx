@@ -47,9 +47,6 @@ const heroSocials = [
 
 const HERO_GIF_SOURCE = assetUrl("projects/coding.gif");
 
-const TRANSPARENT_GIF =
-  "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
-
 const TYPEWRITER_START_DELAY_MS = 6000;
 
 function clamp(value, min, max) {
@@ -234,14 +231,13 @@ export function HeroSection() {
 
   const gifFieldRef = useRef(null);
   const gifMotionFrameRef = useRef(null);
-  const gifVisibilityFrameRef = useRef(null);
 
   const gifPointerRef = useRef({
     clientX: 0,
     clientY: 0,
   });
 
-  const [isGifVisible, setIsGifVisible] = useState(false);
+  const gifVisibleRef = useRef(true);
 
   useEffect(() => {
     const gifField = gifFieldRef.current;
@@ -251,17 +247,9 @@ export function HeroSection() {
     }
 
     if (!("IntersectionObserver" in window)) {
-      gifVisibilityFrameRef.current = window.requestAnimationFrame(() => {
-        setIsGifVisible(true);
-        gifVisibilityFrameRef.current = null;
-      });
+      gifVisibleRef.current = true;
 
       return () => {
-        if (gifVisibilityFrameRef.current !== null) {
-          window.cancelAnimationFrame(gifVisibilityFrameRef.current);
-          gifVisibilityFrameRef.current = null;
-        }
-
         if (gifMotionFrameRef.current !== null) {
           window.cancelAnimationFrame(gifMotionFrameRef.current);
           gifMotionFrameRef.current = null;
@@ -279,7 +267,7 @@ export function HeroSection() {
           return;
         }
 
-        setIsGifVisible(entry.isIntersecting);
+        gifVisibleRef.current = entry.isIntersecting;
 
         if (!entry.isIntersecting) {
           if (gifMotionFrameRef.current !== null) {
@@ -301,11 +289,6 @@ export function HeroSection() {
 
     return () => {
       observer.disconnect();
-
-      if (gifVisibilityFrameRef.current !== null) {
-        window.cancelAnimationFrame(gifVisibilityFrameRef.current);
-        gifVisibilityFrameRef.current = null;
-      }
 
       if (gifMotionFrameRef.current !== null) {
         window.cancelAnimationFrame(gifMotionFrameRef.current);
@@ -369,7 +352,7 @@ export function HeroSection() {
   }
 
   function handleGifPointerMove(event) {
-    if (!isGifVisible) {
+    if (!gifVisibleRef.current) {
       return;
     }
 
@@ -496,13 +479,13 @@ export function HeroSection() {
             className="hero-gif-field relative mx-auto flex w-full max-w-[320px] cursor-pointer items-center justify-center bg-transparent sm:max-w-[420px] md:max-w-[520px] lg:max-w-[720px]"
           >
             <Image
-              src={isGifVisible ? HERO_GIF_SOURCE : TRANSPARENT_GIF}
+              src={HERO_GIF_SOURCE}
               alt="Frontend development illustration"
               width={690}
               height={690}
               sizes="(max-width: 639px) 320px, (max-width: 767px) 420px, (max-width: 1023px) 520px, 690px"
-              loading={isGifVisible ? "eager" : "lazy"}
-              fetchPriority={isGifVisible ? "high" : "low"}
+              loading="eager"
+              fetchPriority="high"
               decoding="async"
               unoptimized
               className="hero-gif-image relative z-10 w-full max-w-[320px] object-contain sm:max-w-[420px] md:max-w-[520px] lg:max-w-[690px]"
