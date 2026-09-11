@@ -4,7 +4,7 @@ const R2_ASSET_BASE_URL = String(
   .trim()
   .replace(/\/+$/, "");
 
-const R2_DIRECTORIES = new Set(["assets", "projects", "sertifikat"]);
+const R2_DIRECTORIES = new Set(["assets", "image", "projects", "sertifikat"]);
 
 function cleanAssetPath(value) {
   return String(value || "").trim();
