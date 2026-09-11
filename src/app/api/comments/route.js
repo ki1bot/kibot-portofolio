@@ -6,8 +6,6 @@ import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DEFAULT_PROFILE_IMAGE = "/img/screen/default-avatar.jpg";
-
 function jsonError(message, status) {
   return NextResponse.json(
     {
@@ -51,8 +49,6 @@ export async function POST(request) {
     const { error } = await supabase.from("portfolio_comments").insert({
       user_name: userName,
       content,
-      profile_image: DEFAULT_PROFILE_IMAGE,
-      is_pinned: false,
     });
 
     if (error) {

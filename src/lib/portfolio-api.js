@@ -15,8 +15,6 @@ const PROJECT_COLUMNS =
 
 const PINNED_RIFQI_PROFILE_IMAGE = resolveAssetUrl("assets/rifqi.jpg");
 
-const DEFAULT_COMMENT_PROFILE_IMAGE = "/img/screen/default-avatar.jpg";
-
 function normalizeProject(project) {
   return {
     ...project,
@@ -52,7 +50,7 @@ function normalizeComment(comment) {
     ...comment,
     profile_image: isPinnedRifqiComment(comment)
       ? PINNED_RIFQI_PROFILE_IMAGE
-      : DEFAULT_COMMENT_PROFILE_IMAGE,
+      : null,
   };
 }
 
