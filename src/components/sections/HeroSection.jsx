@@ -45,7 +45,7 @@ const heroSocials = [
   },
 ];
 
-const HERO_GIF_SOURCE = assetUrl("projects/coding.gif");
+const HERO_ANIMATION_SOURCE = assetUrl("image/coding.webp");
 
 const TYPEWRITER_START_DELAY_MS = 6000;
 
@@ -479,7 +479,7 @@ export function HeroSection() {
             className="hero-gif-field relative mx-auto flex w-full max-w-[320px] cursor-pointer items-center justify-center bg-transparent sm:max-w-[420px] md:max-w-[520px] lg:max-w-[720px]"
           >
             <Image
-              src={HERO_GIF_SOURCE}
+              src={HERO_ANIMATION_SOURCE}
               alt="Frontend development illustration"
               width={690}
               height={690}
