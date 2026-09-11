@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ExternalLink, FileText, FolderKanban, MapPin } from "lucide-react";
 
@@ -126,6 +127,7 @@ export function ProfileSummaryCard({
     const reducedMotionQuery = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     );
+
     const finePointerQuery = window.matchMedia("(any-pointer: fine)");
 
     const rings = [ringOne, ringTwo, ringThree, ringFour];
@@ -145,9 +147,11 @@ export function ProfileSummaryCard({
     function resetProfileMotion() {
       avatar.style.transform =
         "translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) scale(1)";
+
       avatar.style.boxShadow = "";
 
       glow.style.opacity = "0";
+
       glow.style.transform = "translate3d(0px, 0px, 0px) scale(0.94)";
 
       shine.style.opacity = "0";
@@ -178,6 +182,7 @@ export function ProfileSummaryCard({
 
       const deltaX = pointerX - centerX;
       const deltaY = pointerY - centerY;
+
       const distance = Math.hypot(deltaX, deltaY);
 
       const activationRadius = Math.max(rect.width, rect.height) * 0.75 + 110;
@@ -194,13 +199,16 @@ export function ProfileSummaryCard({
       const normalizedY = clamp(deltaY / activationRadius, -1, 1);
 
       const proximity = clamp(1 - distance / activationRadius, 0, 1);
+
       const easedProximity = 1 - Math.pow(1 - proximity, 3);
 
       const avatarTranslateX = normalizedX * (8 + easedProximity * 9);
+
       const avatarTranslateY = normalizedY * (6 + easedProximity * 7);
 
       const avatarRotateX = normalizedY * -8;
       const avatarRotateY = normalizedX * 10;
+
       const avatarScale = 1.015 + easedProximity * 0.035;
 
       const localPointerX = clamp(
@@ -250,27 +258,31 @@ export function ProfileSummaryCard({
 
       ringOne.style.transform = `translate3d(${(normalizedX * 7).toFixed(
         2,
-      )}px, ${(normalizedY * 7).toFixed(
-        2,
-      )}px, 0px) scale(${(1 + easedProximity * 0.03).toFixed(4)})`;
+      )}px, ${(normalizedY * 7).toFixed(2)}px, 0px) scale(${(
+        1 +
+        easedProximity * 0.03
+      ).toFixed(4)})`;
 
       ringTwo.style.transform = `translate3d(${(normalizedX * -5).toFixed(
         2,
-      )}px, ${(normalizedY * -5).toFixed(
-        2,
-      )}px, 0px) scale(${(1 + easedProximity * 0.024).toFixed(4)})`;
+      )}px, ${(normalizedY * -5).toFixed(2)}px, 0px) scale(${(
+        1 +
+        easedProximity * 0.024
+      ).toFixed(4)})`;
 
       ringThree.style.transform = `translate3d(${(normalizedX * 4).toFixed(
         2,
-      )}px, ${(normalizedY * -4).toFixed(
-        2,
-      )}px, 0px) scale(${(1 + easedProximity * 0.017).toFixed(4)})`;
+      )}px, ${(normalizedY * -4).toFixed(2)}px, 0px) scale(${(
+        1 +
+        easedProximity * 0.017
+      ).toFixed(4)})`;
 
       ringFour.style.transform = `translate3d(${(normalizedX * -2).toFixed(
         2,
-      )}px, ${(normalizedY * 2).toFixed(
-        2,
-      )}px, 0px) scale(${(1 + easedProximity * 0.01).toFixed(4)})`;
+      )}px, ${(normalizedY * 2).toFixed(2)}px, 0px) scale(${(
+        1 +
+        easedProximity * 0.01
+      ).toFixed(4)})`;
 
       ringOne.style.borderColor = `rgba(196, 181, 253, ${
         0.18 + easedProximity * 0.28
@@ -355,6 +367,7 @@ export function ProfileSummaryCard({
       window.cancelAnimationFrame(animationFrameId);
 
       window.removeEventListener("pointermove", handlePointerMove);
+
       window.removeEventListener("blur", handleWindowBlur);
 
       document.documentElement.removeEventListener(
@@ -386,14 +399,13 @@ export function ProfileSummaryCard({
   )} contributions in the last year`;
 
   function handleViewProjectsClick(event) {
-    event.preventDefault();
-
     const projectsSection = document.getElementById("projects");
 
     if (!projectsSection) {
-      window.location.href = "/projects";
       return;
     }
+
+    event.preventDefault();
 
     const navbarOffset = window.innerWidth < 768 ? 84 : 115;
 
@@ -661,8 +673,8 @@ export function ProfileSummaryCard({
                   <span className="relative">Download CV</span>
                 </a>
 
-                <a
-                  href="/projects"
+                <Link
+                  href="/#projects"
                   onClick={handleViewProjectsClick}
                   className="group relative inline-flex min-h-[54px] items-center justify-center gap-2.5 overflow-hidden rounded-xl border border-white/15 bg-white/[0.06] px-5 py-3 text-center text-sm font-extrabold text-white shadow-[0_15px_35px_rgba(2,6,23,0.2)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-violet-300/30 hover:bg-white/[0.1] hover:shadow-[0_20px_45px_rgba(76,29,149,0.2)] sm:min-h-14 sm:text-base"
                 >
@@ -671,7 +683,7 @@ export function ProfileSummaryCard({
                   <FolderKanban className="relative size-5 stroke-[2.4] transition duration-300 group-hover:-translate-y-0.5" />
 
                   <span className="relative">View Projects</span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
