@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { IconUserCircle } from "@tabler/icons-react";
 import { Clock3, Pin } from "lucide-react";
 
 function formatCommentDate(dateString) {
@@ -21,8 +22,8 @@ function formatCommentDate(dateString) {
 }
 
 export function CommentCard({ comment }) {
-  const initial = comment.user_name?.charAt(0)?.toUpperCase() || "?";
   const formattedDate = formatCommentDate(comment.created_at);
+  const showProfileImage = comment.is_pinned && comment.profile_image;
 
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-violet-300/20 hover:bg-white/7">
@@ -35,7 +36,7 @@ export function CommentCard({ comment }) {
 
       <div className="flex items-start gap-3">
         <div className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/10">
-          {comment.profile_image ? (
+          {showProfileImage ? (
             <Image
               src={comment.profile_image}
               alt={comment.user_name || "Komentar pengguna"}
@@ -49,7 +50,11 @@ export function CommentCard({ comment }) {
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="text-sm font-semibold text-white">{initial}</span>
+            <IconUserCircle
+              stroke={2}
+              aria-hidden="true"
+              className="size-8 text-blue-100/70"
+            />
           )}
         </div>
 
