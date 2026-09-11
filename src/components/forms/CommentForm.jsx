@@ -13,9 +13,6 @@ import {
   X,
 } from "lucide-react";
 
-import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
-
-const DEFAULT_PROFILE_IMAGE = "/img/screen/default-avatar.jpg";
 const NOTIFICATION_DURATION = 4000;
 const NOTIFICATION_EXIT_DURATION = 250;
 
@@ -140,16 +137,19 @@ export function CommentForm({ messageFieldHeight = null }) {
   function clearNotificationTimers() {
     if (notificationTimerRef.current) {
       window.clearTimeout(notificationTimerRef.current);
+
       notificationTimerRef.current = null;
     }
 
     if (notificationExitTimerRef.current) {
       window.clearTimeout(notificationExitTimerRef.current);
+
       notificationExitTimerRef.current = null;
     }
 
     if (notificationFrameRef.current) {
       window.cancelAnimationFrame(notificationFrameRef.current);
+
       notificationFrameRef.current = null;
     }
   }
@@ -161,6 +161,7 @@ export function CommentForm({ messageFieldHeight = null }) {
 
   function closeNotification() {
     clearNotificationTimers();
+
     setIsNotificationVisible(false);
 
     notificationExitTimerRef.current = window.setTimeout(() => {
@@ -172,6 +173,7 @@ export function CommentForm({ messageFieldHeight = null }) {
     clearNotificationTimers();
 
     setIsNotificationVisible(false);
+
     setNotification({
       type,
       message,
@@ -207,26 +209,29 @@ export function CommentForm({ messageFieldHeight = null }) {
 
     if (!normalizedUserName || !normalizedContent) {
       showNotification("error", "Nama dan komentar wajib diisi.");
-      return;
-    }
 
-    if (!isSupabaseConfigured || !supabase) {
-      showNotification("error", "Supabase belum dikonfigurasi dengan benar.");
       return;
     }
 
     try {
       setIsSubmitting(true);
 
-      const { error } = await supabase.from("portfolio_comments").insert({
-        user_name: normalizedUserName,
-        content: normalizedContent,
-        profile_image: DEFAULT_PROFILE_IMAGE,
-        is_pinned: false,
+      const response = await fetch("/api/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+        body: JSON.stringify({
+          userName: normalizedUserName,
+          content: normalizedContent,
+        }),
       });
 
-      if (error) {
-        throw error;
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(result?.message || "Gagal mengirim komentar.");
       }
 
       setUserName("");
