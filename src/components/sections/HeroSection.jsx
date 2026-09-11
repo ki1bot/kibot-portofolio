@@ -50,6 +50,8 @@ const HERO_GIF_SOURCE = assetUrl("projects/coding.gif");
 const TRANSPARENT_GIF =
   "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
 
+const TYPEWRITER_START_DELAY_MS = 6000;
+
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
@@ -103,12 +105,14 @@ function useTypewriter(
   pause = 1500,
 ) {
   const firstWord = words[0] || "";
+
   const [wordIndex, setWordIndex] = useState(0);
   const [displayText, setDisplayText] = useState(firstWord);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isAnimationEnabled, setIsAnimationEnabled] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (typeof window === "undefined" || words.length === 0) {
       return;
     }
 
@@ -116,7 +120,64 @@ function useTypewriter(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    if (prefersReducedMotion || words.length === 0) {
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    let hasActivated = false;
+
+    function removeActivationListeners() {
+      window.removeEventListener("pointerdown", activateTypewriter);
+      window.removeEventListener("touchstart", activateTypewriter);
+      window.removeEventListener("keydown", activateTypewriter);
+    }
+
+    function activateTypewriter() {
+      if (hasActivated) {
+        return;
+      }
+
+      hasActivated = true;
+
+      window.clearTimeout(startTimer);
+
+      removeActivationListeners();
+
+      setIsDeleting(true);
+      setIsAnimationEnabled(true);
+    }
+
+    const startTimer = window.setTimeout(
+      activateTypewriter,
+      TYPEWRITER_START_DELAY_MS,
+    );
+
+    window.addEventListener("pointerdown", activateTypewriter, {
+      once: true,
+      passive: true,
+    });
+
+    window.addEventListener("touchstart", activateTypewriter, {
+      once: true,
+      passive: true,
+    });
+
+    window.addEventListener("keydown", activateTypewriter, {
+      once: true,
+    });
+
+    return () => {
+      window.clearTimeout(startTimer);
+      removeActivationListeners();
+    };
+  }, [words.length]);
+
+  useEffect(() => {
+    if (
+      typeof window === "undefined" ||
+      !isAnimationEnabled ||
+      words.length === 0
+    ) {
       return;
     }
 
@@ -162,6 +223,7 @@ function useTypewriter(
     typingSpeed,
     deletingSpeed,
     pause,
+    isAnimationEnabled,
   ]);
 
   return displayText;
@@ -173,6 +235,7 @@ export function HeroSection() {
   const gifFieldRef = useRef(null);
   const gifMotionFrameRef = useRef(null);
   const gifVisibilityFrameRef = useRef(null);
+
   const gifPointerRef = useRef({
     clientX: 0,
     clientY: 0,

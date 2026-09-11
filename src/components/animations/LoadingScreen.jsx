@@ -11,8 +11,8 @@ import {
 const MOBILE_EXIT_DELAY_MS = 1200;
 const MOBILE_REMOVE_DELAY_MS = 1700;
 
-const DESKTOP_EXIT_DELAY_MS = 2300;
-const DESKTOP_REMOVE_DELAY_MS = 3000;
+const DESKTOP_EXIT_DELAY_MS = 1200;
+const DESKTOP_REMOVE_DELAY_MS = 1900;
 
 const loadingIcons = [
   {

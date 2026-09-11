@@ -42,6 +42,10 @@ function createImmutableCacheHeaders() {
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  experimental: {
+    inlineCss: true,
+  },
+
   images: {
     minimumCacheTTL: OPTIMIZED_IMAGE_CACHE_TTL,
 
