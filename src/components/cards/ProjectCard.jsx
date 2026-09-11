@@ -6,14 +6,11 @@ import Link from "next/link";
 import { ArrowRight, ExternalLink } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
+import { shouldBypassNextImageOptimization } from "@/lib/next-image";
 import { createProjectSlug } from "@/lib/project-slug";
 
 const PROJECT_RETURN_STORAGE_KEY = "portfolio_project_return";
 const PORTFOLIO_SECTION_HASH = "#projects";
-
-function shouldBypassImageOptimization(imageUrl) {
-  return /\.(?:gif|svg)(?:[?#].*)?$/i.test(String(imageUrl || ""));
-}
 
 function isDownloadableFile(url) {
   return /\.(?:exe|zip|rar|7z|msi)(?:\?.*)?$/i.test(url || "");
@@ -108,7 +105,7 @@ export const ProjectCard = memo(function ProjectCard({ project }) {
               sizes="(max-width: 767px) calc(100vw - 64px), (max-width: 1279px) calc(50vw - 52px), 390px"
               quality={75}
               loading="lazy"
-              unoptimized={shouldBypassImageOptimization(project.img)}
+              unoptimized={shouldBypassNextImageOptimization(project.img)}
               className="object-cover object-top transition duration-700 group-hover:scale-105"
             />
           ) : (

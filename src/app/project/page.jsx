@@ -14,6 +14,7 @@ import { AnimatedBackground } from "@/components/animations/AnimatedBackground";
 import { GithubIcon } from "@/components/icons/TablerIcons";
 import { Footer } from "@/components/layout/Footer";
 import { ProjectBackButton } from "@/components/layout/ProjectBackButton";
+import { shouldBypassNextImageOptimization } from "@/lib/next-image";
 import { getProjectById, getProjectBySlug } from "@/lib/portfolio-api";
 
 export const revalidate = 60;
@@ -39,10 +40,6 @@ function getSearchParamValue(searchParams, key) {
   }
 
   return value;
-}
-
-function shouldBypassImageOptimization(imageUrl) {
-  return /\.(?:gif|svg)(?:[?#].*)?$/i.test(String(imageUrl || ""));
 }
 
 function isDownloadableFile(url) {
@@ -287,7 +284,7 @@ export default async function ProjectDetailPage({ searchParams }) {
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    unoptimized={shouldBypassImageOptimization(project.img)}
+                    unoptimized={shouldBypassNextImageOptimization(project.img)}
                     className="aspect-[16/10] w-full rounded-xl object-cover object-top sm:aspect-video"
                   />
                 ) : (
