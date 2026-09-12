@@ -45,7 +45,7 @@ const heroSocials = [
   },
 ];
 
-const HERO_ANIMATION_SOURCE = assetUrl("image/coding.webp");
+const HERO_ANIMATION_SOURCE = assetUrl("image/coding.gif");
 
 const TYPEWRITER_START_DELAY_MS = 6000;
 
