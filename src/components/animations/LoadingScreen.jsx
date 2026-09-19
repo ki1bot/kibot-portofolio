@@ -8,11 +8,11 @@ import {
   UserIcon,
 } from "@/components/icons/TablerIcons";
 
-const MOBILE_EXIT_DELAY_MS = 1200;
-const MOBILE_REMOVE_DELAY_MS = 1700;
+const MOBILE_EXIT_DELAY_MS = 1800;
+const MOBILE_REMOVE_DELAY_MS = 2300;
 
-const DESKTOP_EXIT_DELAY_MS = 1200;
-const DESKTOP_REMOVE_DELAY_MS = 1900;
+const DESKTOP_EXIT_DELAY_MS = 1800;
+const DESKTOP_REMOVE_DELAY_MS = 2500;
 
 const loadingIcons = [
   {
