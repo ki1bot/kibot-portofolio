@@ -66,10 +66,6 @@ export function shouldBypassNextImageOptimization(imageUrl) {
     return true;
   }
 
-  if (process.env.NODE_ENV !== "development") {
-    return false;
-  }
-
   if (!/^https?:\/\//i.test(normalizedUrl)) {
     return false;
   }

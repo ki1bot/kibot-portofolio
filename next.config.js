@@ -1,7 +1,7 @@
 const IMMUTABLE_ASSET_CACHE_CONTROL =
   "public, max-age=31536000, s-maxage=31536000, immutable";
 
-const OPTIMIZED_IMAGE_CACHE_TTL = 60 * 60 * 24 * 31;
+const OPTIMIZED_IMAGE_CACHE_TTL = 60;
 
 const R2_ASSET_BASE_URL = String(
   process.env.NEXT_PUBLIC_R2_ASSET_BASE_URL || "",
