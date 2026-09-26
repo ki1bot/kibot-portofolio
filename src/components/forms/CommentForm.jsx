@@ -15,6 +15,8 @@ import {
 
 const NOTIFICATION_DURATION = 4000;
 const NOTIFICATION_EXIT_DURATION = 250;
+const MAX_NAME_LENGTH = 80;
+const MAX_COMMENT_LENGTH = 1000;
 
 const fieldClassName =
   "w-full rounded-2xl border border-white/10 bg-white/[0.06] text-sm text-white caret-white outline-none transition placeholder:text-blue-100/35 focus:border-violet-300/35 focus:bg-white/[0.09] autofill:border-white/10 autofill:shadow-[0_0_0_1000px_rgba(255,255,255,0.06)_inset] autofill:[-webkit-text-fill-color:white] autofill:caret-white autofill:transition-[background-color] autofill:duration-[999999s]";
@@ -106,7 +108,15 @@ export function CommentForm({ messageFieldHeight = null }) {
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
 
   const isFormValid = useMemo(() => {
-    return userName.trim().length > 0 && content.trim().length > 0;
+    const normalizedUserName = userName.trim();
+    const normalizedContent = content.trim();
+
+    return (
+      normalizedUserName.length > 0 &&
+      normalizedUserName.length <= MAX_NAME_LENGTH &&
+      normalizedContent.length > 0 &&
+      normalizedContent.length <= MAX_COMMENT_LENGTH
+    );
   }, [userName, content]);
 
   const messageFieldStyle =
@@ -213,6 +223,21 @@ export function CommentForm({ messageFieldHeight = null }) {
       return;
     }
 
+    if (normalizedUserName.length > MAX_NAME_LENGTH) {
+      showNotification("error", `Nama maksimal ${MAX_NAME_LENGTH} karakter.`);
+
+      return;
+    }
+
+    if (normalizedContent.length > MAX_COMMENT_LENGTH) {
+      showNotification(
+        "error",
+        `Komentar maksimal ${MAX_COMMENT_LENGTH} karakter.`,
+      );
+
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -243,7 +268,12 @@ export function CommentForm({ messageFieldHeight = null }) {
     } catch (error) {
       console.error("COMMENT_SUBMIT_ERROR:", error);
 
-      showNotification("error", "Gagal mengirim komentar. Coba lagi nanti.");
+      showNotification(
+        "error",
+        error instanceof Error
+          ? error.message
+          : "Gagal mengirim komentar. Coba lagi nanti.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -272,6 +302,7 @@ export function CommentForm({ messageFieldHeight = null }) {
               name="commenter-name"
               value={userName}
               onChange={handleUserNameChange}
+              maxLength={MAX_NAME_LENGTH}
               placeholder="Masukkan nama Anda"
               autoComplete="name"
               className={`${fieldClassName} h-12 pl-11 pr-4 sm:h-14 sm:pl-12 sm:pr-5`}
@@ -292,6 +323,7 @@ export function CommentForm({ messageFieldHeight = null }) {
               name="comment-message"
               value={content}
               onChange={handleContentChange}
+              maxLength={MAX_COMMENT_LENGTH}
               placeholder="Tulis pesan Anda di sini..."
               rows={7}
               style={messageFieldStyle}
