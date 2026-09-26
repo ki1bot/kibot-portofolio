@@ -4,6 +4,10 @@ const R2_ASSET_BASE_URL = String(
   .trim()
   .replace(/\/+$/, "");
 
+const R2_ASSET_VERSION = String(
+  process.env.NEXT_PUBLIC_R2_ASSET_VERSION || "20260927",
+).trim();
+
 const R2_DIRECTORIES = new Set(["assets", "image", "projects", "sertifikat"]);
 
 function cleanAssetPath(value) {
@@ -117,6 +121,54 @@ function buildR2AssetUrl(path) {
   return `${R2_ASSET_BASE_URL}/${path}`;
 }
 
+function isR2AssetUrl(value) {
+  const cleanValue = cleanAssetPath(value);
+
+  if (!cleanValue || !R2_ASSET_BASE_URL) {
+    return false;
+  }
+
+  try {
+    const assetUrl = new URL(cleanValue);
+    const baseUrl = new URL(R2_ASSET_BASE_URL);
+
+    if (assetUrl.origin !== baseUrl.origin) {
+      return false;
+    }
+
+    const basePath = baseUrl.pathname.replace(/\/+$/, "");
+
+    if (!basePath) {
+      return true;
+    }
+
+    return (
+      assetUrl.pathname === basePath ||
+      assetUrl.pathname.startsWith(`${basePath}/`)
+    );
+  } catch {
+    return false;
+  }
+}
+
+function addR2AssetVersion(value) {
+  const cleanValue = cleanAssetPath(value);
+
+  if (!cleanValue || !R2_ASSET_VERSION || !isR2AssetUrl(cleanValue)) {
+    return cleanValue;
+  }
+
+  try {
+    const url = new URL(cleanValue);
+
+    url.searchParams.set("v", R2_ASSET_VERSION);
+
+    return url.toString();
+  } catch {
+    return cleanValue;
+  }
+}
+
 export function assetUrl(path) {
   const cleanPath = cleanAssetPath(path);
 
@@ -135,6 +187,10 @@ export function assetUrl(path) {
       return assetUrl(supabaseStoragePath);
     }
 
+    if (isR2AssetUrl(cleanPath)) {
+      return addR2AssetVersion(cleanPath);
+    }
+
     return cleanPath;
   }
 
@@ -151,7 +207,7 @@ export function assetUrl(path) {
     const r2Url = buildR2AssetUrl(normalizedPath);
 
     if (r2Url) {
-      return `${r2Url}${suffix}`;
+      return addR2AssetVersion(`${r2Url}${suffix}`);
     }
   }
 

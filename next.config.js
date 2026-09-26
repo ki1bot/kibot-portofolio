@@ -1,7 +1,5 @@
-const IMMUTABLE_ASSET_CACHE_CONTROL =
-  "public, max-age=31536000, s-maxage=31536000, immutable";
-
-const OPTIMIZED_IMAGE_CACHE_TTL = 60;
+const REVALIDATED_ASSET_CACHE_CONTROL =
+  "public, no-cache, max-age=0, must-revalidate";
 
 const R2_ASSET_BASE_URL = String(
   process.env.NEXT_PUBLIC_R2_ASSET_BASE_URL || "",
@@ -61,11 +59,11 @@ function createRemoteImagePatterns() {
   return Array.from(uniquePatterns.values());
 }
 
-function createImmutableCacheHeaders() {
+function createRevalidatedAssetCacheHeaders() {
   return [
     {
       key: "Cache-Control",
-      value: IMMUTABLE_ASSET_CACHE_CONTROL,
+      value: REVALIDATED_ASSET_CACHE_CONTROL,
     },
   ];
 }
@@ -76,7 +74,7 @@ const nextConfig = {
   },
 
   images: {
-    minimumCacheTTL: OPTIMIZED_IMAGE_CACHE_TTL,
+    unoptimized: true,
     formats: ["image/webp"],
     qualities: [75],
     remotePatterns: createRemoteImagePatterns(),
@@ -86,15 +84,15 @@ const nextConfig = {
     return [
       {
         source: "/assets/:path*",
-        headers: createImmutableCacheHeaders(),
+        headers: createRevalidatedAssetCacheHeaders(),
       },
       {
         source: "/img/:path*",
-        headers: createImmutableCacheHeaders(),
+        headers: createRevalidatedAssetCacheHeaders(),
       },
       {
         source: "/sertifikat/:path*",
-        headers: createImmutableCacheHeaders(),
+        headers: createRevalidatedAssetCacheHeaders(),
       },
     ];
   },
