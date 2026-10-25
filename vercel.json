@@ -1,0 +1,3 @@
+{
+  "installCommand": "npm install --global npm@12.2.1 && npm ci"
+}

@@ -2,6 +2,11 @@
   "name": "kibot-portofolio",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@12.2.1",
+  "engines": {
+    "node": "24.x",
+    "npm": "12.2.1"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
